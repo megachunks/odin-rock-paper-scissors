@@ -8,32 +8,28 @@ function getComputerChoice() {
   if (randomNumber === 3) return "scissors";
 }
 
-function getHumanChoice() {
-  let choice = prompt("What's your choice human...?");
-  return choice.toLowerCase();
-}
-
 function winRound() {
-  console.log("You win!");
+  displayResults("You win!");
   humanScore++;
   return;
 }
 function loseRound() {
-  console.log("You lose!");
+  displayResults("You lose!");
   computerScore++;
   return;
 }
 
-function playRound() {
-  let humanChoice = getHumanChoice();
+function playRound(playerSelection) {
+  let humanChoice = playerSelection.toLowerCase();
   let computerChoice = getComputerChoice();
 
-  console.log(
+  displayResults(
     "You picked " + humanChoice + " and the computer picked " + computerChoice,
   );
 
   if (humanChoice === computerChoice) {
-    console.log("Tie! Haha...");
+    updateGameResults();
+    displayResults("Tie! Haha...");
     return;
   }
   if (computerChoice === "rock") {
@@ -45,20 +41,60 @@ function playRound() {
   if (computerChoice === "scissors") {
     humanChoice === "rock" ? winRound() : loseRound();
   }
+
+  updateGameResults();
+  haveAWinner();
   return;
 }
 
 function playGame() {
   for (let i = 1; i <= 5; i++) {
-    console.log("ROUND " + i);
+    displayResults("ROUND " + i);
     playRound();
-    console.log(
+    displayResults(
       "Current scores human vs computer: " + humanScore + " " + computerScore,
     );
   }
-  if (humanScore === computerScore) console.log("GAME: ITS A TIE");
+  if (humanScore === computerScore) displayResults("GAME: ITS A TIE");
   humanScore > computerScore
-    ? console.log("GAME: You win!")
-    : console.log("GAME: You lose!");
+    ? displayResults("GAME: You win!")
+    : displayResults("GAME: You lose!");
   return;
 }
+
+const divOptions = document.querySelector("#options");
+
+divOptions.childNodes.forEach((option) => {
+  option.addEventListener("click", (e) => {
+    playRound(e.target.textContent);
+  });
+});
+
+const divRoundResults = document.querySelector("#round-results");
+
+function displayResults(result) {
+  const p = document.createElement("p");
+  p.textContent = result;
+  divRoundResults.insertBefore(p, divRoundResults.firstChild);
+}
+const pGameScore = document.querySelector("#game-score");
+
+function updateGameResults() {
+  pGameScore.textContent =
+    "Human " + humanScore + " | Computer: " + computerScore;
+}
+
+function haveAWinner() {
+  if (humanScore === 5) {
+    alert("YOU WIN THE GAME!!!");
+    humanScore = 0;
+    computerScore = 0;
+  }
+  if (computerScore === 5) {
+    alert("YOU LOST THE GAME... computer wins e.e");
+    humanScore = 0;
+    computerScore = 0;
+  }
+}
+
+updateGameResults();
